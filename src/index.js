@@ -1,7 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import './styles.css';
 import App from 'components/App';
+import AuthState from 'contexts/auth/AuthState';
+import './styles.css';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <AuthState>
+    <App />
+  </AuthState>,
+  document.getElementById('root'),
+);
