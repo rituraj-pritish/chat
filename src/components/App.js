@@ -7,7 +7,7 @@ import SignInContainer from 'components/auth/sign-in/SignInContainer';
 import SignUpContainer from 'components/auth/sign-up/SignUpContainer';
 import ProtectedRoute from './ProtectedRoute';
 import Home from './home/Home';
-import Loader from './Loader';
+import AppLoader from 'components/loaders/AppLoader';
 import Navbar from './navbar/Navbar';
 
 const App = () => {
@@ -18,7 +18,7 @@ const App = () => {
     authStateChangeHandler();
   }, []);
 
-  if (loading) return <Loader />;
+  if (loading) return <AppLoader />;
 
   return (
     <div className="flex flex-col h-screen max-h-screen overflow-hidden">

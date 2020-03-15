@@ -1,14 +1,22 @@
-import React, { useEffect, useContext, Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import AuthContext from 'contexts/auth/AuthContext';
 import ChatForm from './ChatForm';
+import FilesUploader from './files-uploader/FilesUploader';
+import ChatMessages from './ChatMessages';
+import WelcomeScreen from './WelcomeScreen';
+import ComponentLoader from 'components/loaders/ComponentLoader';
 
-const Chat = ({ secondUser, sendMessage, getChat, messages, clearChat }) => {
-  const authContext = useContext(AuthContext);
-  const {
-    user: { photoURL, displayName },
-  } = authContext;
+const Chat = ({
+  secondUser,
+  sendMessage,
+  getChat,
+  messages,
+  clearChat,
+  loading,
+}) => {
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [showDragDrop, setShowDragDrop] = useState(false);
 
   useEffect(() => {
     if (secondUser) getChat(secondUser);
@@ -18,66 +26,46 @@ const Chat = ({ secondUser, sendMessage, getChat, messages, clearChat }) => {
     };
   }, [secondUser]);
 
-  if (!secondUser) {
-    return (
-      <div className="absolute top-0 bottom-0 right-0 left-64 p-8 flex flex-col flex-grow justify-center">
-        <img
-          className="rounded-full w-32 mx-auto mb-8"
-          src={photoURL}
-          alt={displayName}
-        />
-        <h1 className="text-center">Welcome {displayName}</h1>
-      </div>
-    );
-  }
-
-  const renderMessages = messages.map(({ message: msg, author, date }) => {
-    const dateString = new Date(date)
-      .toString()
-      .split(' ')
-      .slice(1, 5)
-      .join(' ');
-
-    return (
-      <div className="mb-2" key={date}>
-        <p
-          className={`bg-indigo-100 px-2 py-1 rounded break-words max-w-md ${
-            author === secondUser ? 'mr-auto' : 'ml-auto'
-          }`}
-          style={{ width: 'max-content' }}
-        >
-          {msg}
-        </p>
-        <div
-          className={`text-gray-500 text-xs ${
-            author === secondUser ? 'text-left' : 'text-right'
-          }`}
-        >
-          {dateString}
-        </div>
-      </div>
-    );
-  });
+  if (!secondUser) return <WelcomeScreen />;
 
   return (
     <div className="flex-grow absolute top-0 bottom-0 right-0 left-64 px-8 pt-8 overflow-y-scroll flex flex-col">
-      {messages.length === 0 ? (
+      {loading && <ComponentLoader />}
+      {messages.length === 0 && !loading ? (
         <div className="text-center text-gray-500">
           Send a message to start a conversation
         </div>
       ) : (
-        renderMessages
+        <ChatMessages messages={messages} secondUser={secondUser} />
       )}
-      <ChatForm secondUser={secondUser} sendMessage={sendMessage} />
+      <FilesUploader
+        showOverlay={showOverlay}
+        showDragDrop={showDragDrop}
+        setShowDragDrop={setShowDragDrop}
+        setShowOverlay={setShowOverlay}
+        secondUser={secondUser}
+      />
+      <ChatForm
+        setShowOverlay={setShowOverlay}
+        setShowDragDrop={setShowDragDrop}
+        secondUser={secondUser}
+        sendMessage={sendMessage}
+      />
     </div>
   );
 };
 
 Chat.propTypes = {
-  secondUser: PropTypes.string.isRequired,
+  secondUser: PropTypes.string,
   messages: PropTypes.arrayOf(PropTypes.object).isRequired,
   getChat: PropTypes.func.isRequired,
   sendMessage: PropTypes.func.isRequired,
+  clearChat: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
+};
+
+Chat.defaultProps = {
+  secondUser: null,
 };
 
 export default Chat;

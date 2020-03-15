@@ -5,12 +5,7 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const authContext = useContext(AuthContext);
-  const { signOut, isAuthenticated, user } = authContext;
-
-  let firstName;
-  if (user && user.displayName) {
-    firstName = user.displayName.split(' ').splice(0, 1);
-  }
+  const { signOut, isAuthenticated } = authContext;
 
   return (
     <div className="bg-indigo-500 h-16">
@@ -19,16 +14,13 @@ const Navbar = () => {
           <Link to="/">CHAT</Link>
         </div>
         {isAuthenticated && (
-          <>
-            {firstName}
-            <button
-              type="button"
-              className="bg-white text-gray-200"
-              onClick={signOut}
-            >
-              Sign Out
-            </button>
-          </>
+          <button
+            type="button"
+            className="bg-white px-3 py-1 rounded "
+            onClick={signOut}
+          >
+            Sign Out
+          </button>
         )}
       </div>
     </div>

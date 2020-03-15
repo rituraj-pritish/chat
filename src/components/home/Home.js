@@ -12,6 +12,7 @@ const Home = () => {
     sendMessage,
     messages,
     getChat,
+    loading,
     clearChat,
   } = userContext;
 
@@ -34,6 +35,7 @@ const Home = () => {
         getChat={getChat}
         messages={messages}
         clearChat={clearChat}
+        loading={loading}
       />
     </div>
   );
