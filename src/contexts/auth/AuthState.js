@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
 
-import { AUTH_ERROR, AUTH_SUCCESS, SET_USER, SIGNOUT } from 'contexts/types';
+import { AUTH_ERROR, AUTH_SUCCESS, SIGNOUT } from 'contexts/types';
 import { firebase, db } from 'firebase-config/firebase';
 import authReducer from './authReducer';
 import AuthContext from './AuthContext';
@@ -18,6 +18,7 @@ const AuthState = ({ children }) => {
   const signUp = async ({ name, email, password }) => {
     const DEFAULT_IMAGE_URL =
       'https://firebasestorage.googleapis.com/v0/b/chat-c063c.appspot.com/o/assets%2Fuser.png?alt=media&token=a6fa6d73-3ac4-4e89-ad36-55904f4de284';
+
     try {
       const res = await firebase
         .auth()
@@ -39,6 +40,9 @@ const AuthState = ({ children }) => {
         type: AUTH_SUCCESS,
         payload: {
           displayName: name,
+          email,
+          photoURL: DEFAULT_IMAGE_URL,
+          uid: res.user.id,
         },
       });
     } catch (err) {
@@ -132,15 +136,6 @@ const AuthState = ({ children }) => {
     });
   };
 
-  const setUserOffline = async () => {
-    await db
-      .collection('users')
-      .doc(state.user.uid)
-      .update({
-        online: false,
-      });
-  };
-
   return (
     <AuthContext.Provider
       value={{
@@ -152,7 +147,6 @@ const AuthState = ({ children }) => {
         signOut,
         authWithGoogle,
         authStateChangeHandler,
-        setUserOffline,
       }}
     >
       {children}

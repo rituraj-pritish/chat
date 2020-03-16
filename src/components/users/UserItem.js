@@ -4,11 +4,14 @@ import PropTypes from 'prop-types';
 const UserItem = ({ displayName, photoURL, online, active }) => {
   return (
     <div
-      className={`flex m-2 p-2 h-20 hover:bg-gray-200 ${active &&
+      className={`flex my-2 p-2 h-20 hover:bg-indigo-100 ${active &&
         'bg-gray-200'}`}
     >
       <div className="relative">
-        <img className="w-16 rounded-full" src={photoURL} alt={displayName} />
+        <div
+          className="w-16 h-16 rounded-full"
+          style={{ background: `url(${photoURL}) center center / cover` }}
+        />
         {online && (
           <div className="absolute bg-green-400 w-4 h-4 right-0 top-0 rounded-full" />
         )}

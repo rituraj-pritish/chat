@@ -15,7 +15,7 @@ const Users = ({ users, setSecondUser, secondUser }) => {
     );
   });
   return (
-    <div className="absolute left-0 top-0 bottom-0 max-w-xs w-64 bg-yellow-200 overflow-y-scroll">
+    <div className="absolute left-0 top-0 bottom-0 max-w-xs w-64 bg-indigo-200 overflow-y-scroll">
       {render}
     </div>
   );
@@ -24,6 +24,7 @@ const Users = ({ users, setSecondUser, secondUser }) => {
 Users.propTypes = {
   users: PropTypes.arrayOf(PropTypes.object).isRequired,
   setSecondUser: PropTypes.func.isRequired,
+  secondUser: PropTypes.string,
 };
 
 export default Users;

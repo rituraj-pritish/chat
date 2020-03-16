@@ -22,6 +22,7 @@ const SignUp = ({ formData, handleChange, handleSubmit, authWithGoogle }) => {
               placeholder="Name"
               onChange={handleChange}
               value={name}
+              required
             />
           </label>
         </div>
@@ -40,6 +41,7 @@ const SignUp = ({ formData, handleChange, handleSubmit, authWithGoogle }) => {
               placeholder="Email"
               onChange={handleChange}
               value={email}
+              required
             />
           </label>
         </div>
@@ -58,6 +60,7 @@ const SignUp = ({ formData, handleChange, handleSubmit, authWithGoogle }) => {
               placeholder="Password"
               onChange={handleChange}
               value={password}
+              required
             />
           </label>
         </div>
@@ -76,6 +79,7 @@ const SignUp = ({ formData, handleChange, handleSubmit, authWithGoogle }) => {
               placeholder="Confirm Password"
               onChange={handleChange}
               value={confirmPassword}
+              required
             />
           </label>
         </div>

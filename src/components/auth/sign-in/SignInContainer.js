@@ -9,8 +9,8 @@ const SignInContainer = () => {
   const { signIn, authWithGoogle, isAuthenticated } = authContext;
 
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: 'jd@gmail.com',
+    password: '123123',
   });
 
   if (isAuthenticated) return <Redirect to="/" />;

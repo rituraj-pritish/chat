@@ -5,9 +5,9 @@ import UserState from 'contexts/user/UserState';
 import AuthContext from 'contexts/auth/AuthContext';
 import SignInContainer from 'components/auth/sign-in/SignInContainer';
 import SignUpContainer from 'components/auth/sign-up/SignUpContainer';
+import AppLoader from 'components/loaders/AppLoader';
 import ProtectedRoute from './ProtectedRoute';
 import Home from './home/Home';
-import AppLoader from 'components/loaders/AppLoader';
 import Navbar from './navbar/Navbar';
 
 const App = () => {

@@ -22,6 +22,7 @@ const SignIn = ({ formData, handleChange, handleSubmit, authWithGoogle }) => {
               placeholder="Email"
               onChange={handleChange}
               value={email}
+              required
             />
           </label>
         </div>
@@ -39,6 +40,7 @@ const SignIn = ({ formData, handleChange, handleSubmit, authWithGoogle }) => {
               placeholder="Password"
               onChange={handleChange}
               value={password}
+              required
             />
           </label>
         </div>

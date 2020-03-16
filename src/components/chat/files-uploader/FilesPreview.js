@@ -1,11 +1,16 @@
 import React from 'react';
-import UserContext from 'contexts/user/UserContext';
 
 const FilesPreview = ({ open, handlePreviewClose, filesUrls, handleSend }) => {
   if (!open) return null;
 
   return (
-    <div className="bg-pink-100 z-30 w-full text-center py-6">
+    <div className="bg-pink-100 px-8 z-30 w-full text-center py-6 relative max-w-screen-xl">
+      <span
+        className="absolute top-0 right-16 text-red-600 cursor-pointer"
+        onClick={handlePreviewClose}
+      >
+        Close
+      </span>
       <div className="flex overflow-x-scroll">
         {filesUrls.map(({ type, url, name }) => {
           if (type === 'image') {

@@ -1,12 +1,11 @@
 import React, { useReducer, useContext } from 'react';
 import PropTypes from 'prop-types';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 
 import {
   SET_USERS,
   SET_CHAT_MESSAGES,
   CLEAR_CHAT_MESSAGES,
-  SET_FILES_UPLOAD_PROGRESS,
   SET_LOADING,
 } from 'contexts/types';
 import { db, storage } from 'firebase-config/firebase';
@@ -39,25 +38,32 @@ const UserState = ({ children }) => {
         const users = data.docs.map((doc) => doc.data());
 
         const usersExceptCurrentUser = users.filter(
-          (el) => el.uid !== currentUser,
+          (item) => item.uid !== currentUser,
         );
 
         dispatch({ type: SET_USERS, payload: usersExceptCurrentUser });
       });
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const getChat = (reciever) => {
+  const getChat = async (reciever) => {
     dispatch({ type: SET_LOADING, payload: true });
-    db.collection('chats')
-      .doc(chatId(currentUser, reciever))
-      .collection('messages')
-      .orderBy('date')
-      .onSnapshot((snap) => {
-        const messages = snap.docs.map((doc) => doc.data());
+    try {
+      await db
+        .collection('chats')
+        .doc(chatId(currentUser, reciever))
+        .collection('messages')
+        .orderBy('date')
+        .onSnapshot((snap) => {
+          const messages = snap.docs.map((doc) => doc.data());
 
-        dispatch({ type: SET_CHAT_MESSAGES, payload: messages });
-      });
+          dispatch({ type: SET_CHAT_MESSAGES, payload: messages });
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const clearChat = () => dispatch({ type: CLEAR_CHAT_MESSAGES });
@@ -69,51 +75,77 @@ const UserState = ({ children }) => {
       .doc(id)
       .collection('messages');
 
-    const res = await messagesRef.add({
-      message,
-      author: currentUser,
-      date: Date.now(),
-      uid: id,
-    });
+    try {
+      const res = await messagesRef.add({
+        message,
+        author: currentUser,
+        date: Date.now(),
+        uid: uuid(),
+      });
 
-    if (res.id) await messagesRef.doc(res.id).update({ uid: res.id });
+      if (res.id) await messagesRef.doc(res.id).update({ uid: res.id });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const sendFiles = (reciever, files) => {
     const storageRef = storage.ref('files');
-    const id = uuid();
 
     files.map(async (file) => {
+      const id = uuid();
+
       try {
         await storageRef
           .child(id)
           .put(file)
-          .on('state_changed', (snap) => {
-            const progress = (snap.bytesTransferred / snap.totalBytes) * 100;
-
-            dispatch({ type: SET_FILES_UPLOAD_PROGRESS, payload: progress });
-
-            if (progress === 100) {
-              storageRef
-                .child(id)
-                .getDownloadURL()
-                .then((url) => {
-                  if (file.type.split('/')[0] === 'image') {
-                    sendMessage(reciever, {
-                      type: 'image',
-                      fileName: file.name,
-                      url,
-                    });
-                  } else {
-                    sendMessage(reciever, {
-                      type: 'document',
-                      fileName: file.name,
-                      url,
-                    });
-                  }
-                });
-            }
+          .then(() => {
+            storageRef
+              .child(id)
+              .getDownloadURL()
+              .then((url) => {
+                if (file.type.split('/')[0] === 'image') {
+                  sendMessage(reciever, {
+                    type: 'image',
+                    fileName: file.name,
+                    url,
+                  });
+                } else {
+                  sendMessage(reciever, {
+                    type: 'document',
+                    fileName: file.name,
+                    url,
+                  });
+                }
+              });
           });
+
+        // .on('state_changed', (snap) => {
+        //   const progress = (snap.bytesTransferred / snap.totalBytes) * 100;
+
+        //   dispatch({ type: SET_FILES_UPLOAD_PROGRESS, payload: progress });
+
+        //   if (progress === 100) {
+        //     storageRef
+        //       .child(id)
+        //       .getDownloadURL()
+        //       .then((url) => {
+        //         if (file.type.split('/')[0] === 'image') {
+        //           sendMessage(reciever, {
+        //             type: 'image',
+        //             fileName: file.name,
+        //             url,
+        //           });
+        //         } else {
+        //           sendMessage(reciever, {
+        //             type: 'document',
+        //             fileName: file.name,
+        //             url,
+        //           });
+        //         }
+        //       });
+        //   }
+        // });
       } catch (err) {
         console.log(err);
       }
@@ -126,7 +158,6 @@ const UserState = ({ children }) => {
         users: state.users,
         messages: state.chatMessages,
         loading: state.loading,
-        uploadProgress: state.filesUploadProgress,
         getUsers,
         sendMessage,
         getChat,

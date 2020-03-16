@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
+import ComponentLoader from 'components/loaders/ComponentLoader';
 import ChatForm from './ChatForm';
 import FilesUploader from './files-uploader/FilesUploader';
 import ChatMessages from './ChatMessages';
 import WelcomeScreen from './WelcomeScreen';
-import ComponentLoader from 'components/loaders/ComponentLoader';
 
 const Chat = ({
   secondUser,
@@ -26,10 +26,19 @@ const Chat = ({
     };
   }, [secondUser]);
 
+  const chatRoom = document.getElementById('chat-room');
+
+  useEffect(() => {
+    if (chatRoom) chatRoom.scrollTo(0, chatRoom.scrollHeight);
+  }, [messages]);
+
   if (!secondUser) return <WelcomeScreen />;
 
   return (
-    <div className="flex-grow absolute top-0 bottom-0 right-0 left-64 px-8 pt-8 overflow-y-scroll flex flex-col">
+    <div
+      id="chat-room"
+      className="flex-grow bg-indigo-100 absolute top-0 bottom-0 right-0 left-64 px-8 pt-8 overflow-y-scroll flex flex-col"
+    >
       {loading && <ComponentLoader />}
       {messages.length === 0 && !loading ? (
         <div className="text-center text-gray-500">
@@ -62,10 +71,6 @@ Chat.propTypes = {
   sendMessage: PropTypes.func.isRequired,
   clearChat: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
-};
-
-Chat.defaultProps = {
-  secondUser: null,
 };
 
 export default Chat;
