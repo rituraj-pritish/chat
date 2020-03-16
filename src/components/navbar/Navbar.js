@@ -19,7 +19,7 @@ const Navbar = () => {
           <Link className="text-2xl font-bold" to="/">
             CHAT
           </Link>
-          <div className="ml-3">Hi {firstName}</div>
+          {user && <div className="ml-3">Hi {firstName}</div>}
         </div>
         {isAuthenticated && (
           <button
